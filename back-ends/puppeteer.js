@@ -136,8 +136,8 @@ async function getPageData(browser, page, options) {
 		if (options.browserWaitDelay) {
 			await page.waitForTimeout(options.browserWaitDelay);
 		}
-		if (options.screenShotPath) {
-			await page.screenshot({ path: options.screenShotPath });
+		if (options.screenshotPath) {
+			await page.screenshot({ path: options.screenshotPath });
 		}
 		return await page.evaluate(async options => {
 			const pageData = await singlefile.getPageData(options);
@@ -149,8 +149,8 @@ async function getPageData(browser, page, options) {
 	} catch (error) {
 		if (error.message && error.message.includes(EXECUTION_CONTEXT_DESTROYED_ERROR)) {
 			const pageData = await handleJSRedirect(browser, options);
-			if (options.screenShotPath) {
-				await page.screenshot({ path: options.screenShotPath });
+			if (options.screenshotPath) {
+				await page.screenshot({ path: options.screenshotPath });
 			}
 			if (pageData) {
 				return pageData;
