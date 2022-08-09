@@ -136,6 +136,9 @@ async function getPageData(browser, page, options) {
 		if (options.browserWaitDelay) {
 			await page.waitForTimeout(options.browserWaitDelay);
 		}
+		if (options.screenShotPath) {
+			await page.screenshot({ path: options.screenShotPath });
+		}
 		return await page.evaluate(async options => {
 			const pageData = await singlefile.getPageData(options);
 			if (options.includeInfobar) {
@@ -146,6 +149,9 @@ async function getPageData(browser, page, options) {
 	} catch (error) {
 		if (error.message && error.message.includes(EXECUTION_CONTEXT_DESTROYED_ERROR)) {
 			const pageData = await handleJSRedirect(browser, options);
+			if (options.screenShotPath) {
+				await page.screenshot({ path: options.screenShotPath });
+			}
 			if (pageData) {
 				return pageData;
 			} else {
