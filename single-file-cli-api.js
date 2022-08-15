@@ -267,7 +267,7 @@ async function capturePage(options) {
 			if (dirname) {
 				fs.mkdirSync(dirname, { recursive: true });
 			}
-			fs.writeFileSync(filename, pageData.content);
+			fs.writeFileSync(filename, pageData.content.replace('<head>', '<head><base target="_blank">'));
 		}
 		return pageData;
 	} catch (error) {
