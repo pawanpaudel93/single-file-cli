@@ -153,8 +153,9 @@ async function getPageData(browser, page, options) {
 	} catch (error) {
 		if (error.message && error.message.includes(EXECUTION_CONTEXT_DESTROYED_ERROR)) {
 			const pageData = await handleJSRedirect(browser, options);
-			if (options.screenshotPath) {
+			if (options.basePath) {
 				await page.screenshot({ path: path.join(options.basePath, "screenshot.png") });
+				const title = await page.title();
 				await fsPromises.writeFile(path.join(options.basePath, "metadata.json"), JSON.stringify({ title, url: options.url }, null, 2));
 			}
 			if (pageData) {
