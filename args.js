@@ -38,7 +38,7 @@ const args = require("yargs")
 			"document": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
 		},
 		"back-end": "puppeteer",
-		"screenshot-path": "",
+		"base-path": "",
 		"block-mixed-content": false,
 		"browser-server": "",
 		"browser-headless": true,
@@ -104,7 +104,8 @@ const args = require("yargs")
 	})
 	.options("back-end", { description: "Back-end to use" })
 	.choices("back-end", ["jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium"])
-	.options("screenshot-path", { description: "Path of the screen shot" })
+	.options("base-path", { description: "Base path for storing screenshot and metadata" })
+	.string("base-path")
 	.options("--block-audios", { description: "Block audios" })
 	.boolean("--block-audios")
 	.options("--block-fonts", { description: "Block fonts" })

@@ -25,6 +25,8 @@
 
 const puppeteer = require("puppeteer-core");
 const scripts = require("./common/scripts.js");
+const path = require("path");
+const fsPromises =  require("node:fs/promises");
 
 const EXECUTION_CONTEXT_DESTROYED_ERROR = "Execution context was destroyed";
 const NETWORK_IDLE_STATE = "networkidle0";
@@ -136,8 +138,10 @@ async function getPageData(browser, page, options) {
 		if (options.browserWaitDelay) {
 			await page.waitForTimeout(options.browserWaitDelay);
 		}
-		if (options.screenshotPath) {
-			await page.screenshot({ path: options.screenshotPath });
+		if (options.basePath) {
+			await page.screenshot({ path: path.join(options.basePath, "screenshot.png") });
+			const title = await page.title();
+			await fsPromises.writeFile(path.join(options.basePath, "metadata.json"), JSON.stringify({ title, url: options.url }, null, 2));
 		}
 		return await page.evaluate(async options => {
 			const pageData = await singlefile.getPageData(options);
@@ -150,7 +154,8 @@ async function getPageData(browser, page, options) {
 		if (error.message && error.message.includes(EXECUTION_CONTEXT_DESTROYED_ERROR)) {
 			const pageData = await handleJSRedirect(browser, options);
 			if (options.screenshotPath) {
-				await page.screenshot({ path: options.screenshotPath });
+				await page.screenshot({ path: path.join(options.basePath, "screenshot.png") });
+				await fsPromises.writeFile(path.join(options.basePath, "metadata.json"), JSON.stringify({ title, url: options.url }, null, 2));
 			}
 			if (pageData) {
 				return pageData;

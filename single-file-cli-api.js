@@ -29,7 +29,7 @@ const scripts = require("./back-ends/common/scripts.js");
 const VALID_URL_TEST = /^(https?|file):\/\//;
 
 const DEFAULT_OPTIONS = {
-	screenshotPath: "",
+	basePath: "",
 	removeHiddenElements: true,
 	removeUnusedStyles: true,
 	removeUnusedFonts: true,
