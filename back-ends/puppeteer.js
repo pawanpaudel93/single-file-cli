@@ -27,7 +27,7 @@ const puppeteer = require("puppeteer-core");
 const scripts = require("./common/scripts.js");
 const path = require("path");
 const fsPromises =  require("node:fs/promises");
-import chrome from 'chrome-aws-lambda';
+const chrome = require('chrome-aws-lambda');
 
 const EXECUTION_CONTEXT_DESTROYED_ERROR = "Execution context was destroyed";
 const NETWORK_IDLE_STATE = "networkidle0";
