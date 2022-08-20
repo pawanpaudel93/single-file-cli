@@ -29,6 +29,7 @@ const scripts = require("./back-ends/common/scripts.js");
 const VALID_URL_TEST = /^(https?|file):\/\//;
 
 const DEFAULT_OPTIONS = {
+	localhost: true,
 	basePath: "",
 	removeHiddenElements: true,
 	removeUnusedStyles: true,

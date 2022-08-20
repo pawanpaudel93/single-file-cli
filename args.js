@@ -39,6 +39,7 @@ const args = require("yargs")
 		},
 		"back-end": "puppeteer",
 		"base-path": "",
+		"localhost": true,
 		"block-mixed-content": false,
 		"browser-server": "",
 		"browser-headless": true,
@@ -104,6 +105,8 @@ const args = require("yargs")
 	})
 	.options("back-end", { description: "Back-end to use" })
 	.choices("back-end", ["jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium"])
+	.options("localhost", {description: "localhost or not"})
+	.boolean("localhost")
 	.options("base-path", { description: "Base path for storing screenshot and metadata" })
 	.string("base-path")
 	.options("--block-audios", { description: "Block audios" })

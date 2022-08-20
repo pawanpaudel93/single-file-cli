@@ -27,6 +27,7 @@ const puppeteer = require("puppeteer-core");
 const scripts = require("./common/scripts.js");
 const path = require("path");
 const fsPromises =  require("node:fs/promises");
+import chrome from 'chrome-aws-lambda';
 
 const EXECUTION_CONTEXT_DESTROYED_ERROR = "Execution context was destroyed";
 const NETWORK_IDLE_STATE = "networkidle0";
@@ -38,7 +39,7 @@ exports.initialize = async options => {
 	if (options.browserServer) {
 		browser = await puppeteer.connect({ browserWSEndpoint: options.browserServer });
 	} else {
-		browser = await puppeteer.launch(getBrowserOptions(options));
+		browser = await puppeteer.launch(await getBrowserOptions(options));
 	}
 	return browser;
 };
@@ -64,7 +65,7 @@ exports.closeBrowser = () => {
 	}
 };
 
-function getBrowserOptions(options = {}) {
+async function getBrowserOptions(options = {}) {
 	const browserOptions = {};
 	if (options.browserHeadless !== undefined) {
 		browserOptions.headless = options.browserHeadless && !options.browserDebug;
@@ -83,6 +84,12 @@ function getBrowserOptions(options = {}) {
 	browserOptions.executablePath = options.browserExecutablePath || "chrome";
 	if (options.userAgent) {
 		browserOptions.args.push("--user-agent=" + options.userAgent);
+	}
+	if (!options.localhost){
+		browserOptions.args.push(...chrome.args);
+		browserOptions.defaultViewport = chrome.defaultViewport;
+		browserOptions.executablePath = await chrome.executablePath;
+		browserOptions.ignoreHTTPSErrors = true;
 	}
 	return browserOptions;
 }
