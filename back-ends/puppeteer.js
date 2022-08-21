@@ -23,7 +23,7 @@
 
 /* global singlefile, infobar, require, exports */
 
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const scripts = require("./common/scripts.js");
 const path = require("path");
 const fsPromises =  require("node:fs/promises");
