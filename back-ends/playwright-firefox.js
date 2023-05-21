@@ -38,7 +38,8 @@ exports.getPageData = async options => {
 	let page, context;
 	try {
 		context = await browser.newContext({
-			bypassCSP: options.browserBypassCSP === undefined || options.browserBypassCSP
+			bypassCSP: options.browserBypassCSP === undefined || options.browserBypassCSP,
+			ignoreHTTPSErrors: options.browserIgnoreInsecureCerts !== undefined && options.browserIgnoreInsecureCerts
 		});
 		await setContextOptions(context, options);
 		page = await context.newPage();
@@ -86,8 +87,11 @@ async function setPageOptions(page, options) {
 		page.setExtraHTTPHeaders(options.httpHeaders);
 	}
 	if (options.emulateMediaFeatures) {
-		await page.emulateMediaFeatures(options.emulateMediaFeatures);
+		await page.emulateMedia({
+			features: options.emulateMediaFeatures
+		});
 	}
+	options.browserWaitUntil = "load";
 }
 
 async function getPageData(page, options) {
