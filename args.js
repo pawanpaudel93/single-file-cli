@@ -57,6 +57,7 @@ const args = require("yargs")
 		"browser-start-minimized": false,
 		"browser-cookie": [],
 		"browser-cookies-file": "",
+		"browser-ignore-insecure-certs": false,
 		"compress-CSS": false,
 		"compress-HTML": true,
 		"dump-content": false,
@@ -69,6 +70,9 @@ const args = require("yargs")
 		"group-duplicate-images": true,
 		"max-size-duplicate-images": 512 * 1024,
 		"http-header": [],
+		"http-proxy-server": "",
+		"http-proxy-username": "",
+		"http-proxy-password": "",
 		"include-infobar": false,
 		"insert-meta-csp": true,
 		"load-deferred-images": true,
@@ -83,6 +87,7 @@ const args = require("yargs")
 		"remove-hidden-elements": true,
 		"remove-unused-styles": true,
 		"remove-unused-fonts": true,
+		"remove-saved-date": false,
 		"remove-frames": false,
 		"block-scripts": true,
 		"block-audios": true,
@@ -104,21 +109,21 @@ const args = require("yargs")
 		"crawl-rewrite-rule": []
 	})
 	.options("back-end", { description: "Back-end to use" })
-	.choices("back-end", ["jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium"])
+	.choices("back-end", ["jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium", "playwright-webkit"])
 	.options("localhost", {description: "localhost or not"})
 	.boolean("localhost")
-	.options("base-path", { description: "Base path for storing screenshot and metadata" })
+	.options("base-path", { description: "Base path for storing html, screenshot and metadata" })
 	.string("base-path")
-	.options("--block-audios", { description: "Block audios" })
-	.boolean("--block-audios")
-	.options("--block-fonts", { description: "Block fonts" })
-	.boolean("--block-fonts")
-	.options("--block-images", { description: "Block images" })
-	.boolean("--block-images")
-	.options("--block-scripts", { description: "Block scripts" })
-	.boolean("--block-scripts")
-	.options("--block-videos", { description: "Block videos" })
-	.boolean("--block-videos")
+	.options("block-audios", { description: "Block audios" })
+	.boolean("block-audios")
+	.options("block-fonts", { description: "Block fonts" })
+	.boolean("block-fonts")
+	.options("block-images", { description: "Block images" })
+	.boolean("block-images")
+	.options("block-scripts", { description: "Block scripts" })
+	.boolean("block-scripts")
+	.options("block-videos", { description: "Block videos" })
+	.boolean("block-videos")
 	.options("block-mixed-content", { description: "Block mixed contents" })
 	.boolean("block-mixed-content")
 	.options("browser-server", { description: "Server to connect to (puppeteer only for now)" })
@@ -153,6 +158,8 @@ const args = require("yargs")
 	.array("browser-cookie")
 	.options("browser-cookies-file", { description: "Path of the cookies file formatted as a JSON file or a Netscape text file (puppeteer, webdriver-gecko, webdriver-chromium, jsdom)" })
 	.string("browser-cookies-file")
+	.options("browser-ignore-insecure-certs", { description: "Ignore HTTPs errors" })
+	.boolean("browser-ignore-insecure-certs")
 	.options("compress-CSS", { description: "Compress CSS stylesheets" })
 	.boolean("compress-CSS")
 	.options("compress-HTML", { description: "Compress HTML content" })
@@ -201,6 +208,12 @@ const args = require("yargs")
 	.number("max-size-duplicate-images")
 	.options("http-header", { description: "Extra HTTP header (puppeteer, jsdom)" })
 	.array("http-header")
+	.options("http-proxy-server", { description: "Proxy address (puppeteer)" })
+	.string("http-proxy-server")
+	.options("http-proxy-username", { description: "HTTP username (puppeteer)" })
+	.string("http-proxy-username")
+	.options("http-proxy-password", { description: "HTTP password (puppeteer)" })
+	.string("http-proxy-password")
 	.options("include-BOM", { description: "Include the UTF-8 BOM into the HTML page" })
 	.boolean("include-BOM")
 	.options("include-infobar", { description: "Include the infobar" })
@@ -231,6 +244,8 @@ const args = require("yargs")
 	.boolean("remove-unused-styles")
 	.options("remove-unused-fonts", { description: "Remove unused CSS font rules" })
 	.boolean("remove-unused-fonts")
+	.options("remove-saved-date", { description: "Remove saved date metadata in HTML header" })
+  .boolean("remove-saved-date")
 	.options("block-scripts", { description: "Block scripts" })
 	.boolean("block-scripts")
 	.options("block-audios", { description: "Block audio elements" })
@@ -265,6 +280,7 @@ args.includeBOM = args.includeBom;
 args.crawlReplaceURLs = args.crawlReplaceUrls;
 args.crawlRemoveURLFragment = args.crawlRemoveUrlFragment;
 args.insertMetaCSP = args.insertMetaCsp;
+args.saveOriginalURLs = args.saveOriginalUrls;
 if (args.removeScripts) {
 	args.blockScripts = true;
 }

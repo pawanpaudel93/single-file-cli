@@ -21,7 +21,7 @@
  *   Source.
  */
 
-/* global singlefile, infobar, require, exports */
+/* global singlefile, require, exports */
 
 const puppeteer = require("puppeteer-core");
 const scripts = require("./common/scripts.js");
@@ -63,6 +63,9 @@ function getBrowserOptions(options) {
 	if (options.browserExecutablePath) {
 		browserOptions.executablePath = options.browserExecutablePath || "firefox";
 	}
+	if (options.browserIgnoreInsecureCerts !== undefined) {
+		browserOptions.ignoreHTTPSErrors = options.browserIgnoreInsecureCerts;
+	}
 	browserOptions.product = "firefox";
 	return browserOptions;
 }
@@ -98,6 +101,7 @@ async function setPageOptions(page, options) {
 			// ignored
 		}
 	}
+	options.browserWaitUntil = "load";
 }
 
 async function getPageData(browser, page, options) {
@@ -113,11 +117,7 @@ async function getPageData(browser, page, options) {
 			await page.waitForTimeout(options.browserWaitDelay);
 		}
 		return await page.evaluate(async options => {
-			const pageData = await singlefile.getPageData(options);
-			if (options.includeInfobar) {
-				await infobar.includeScript(pageData);
-			}
-			return pageData;
+			return await singlefile.getPageData(options);
 		}, options);
 	} catch (error) {
 		if (error.message && error.message.includes(EXECUTION_CONTEXT_DESTROYED_ERROR)) {

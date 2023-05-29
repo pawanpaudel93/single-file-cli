@@ -23,7 +23,7 @@
 
 /* global singlefile, require, exports */
 
-const playwright = require("playwright").chromium;
+const playwright = require("playwright").webkit;
 const scripts = require("./common/scripts.js");
 
 const NETWORK_IDLE_STATE = "networkidle";
@@ -77,7 +77,7 @@ function getBrowserOptions(options) {
 	}
 	browserOptions.args = options.browserArgs ? JSON.parse(options.browserArgs) : [];
 	if (options.browserExecutablePath) {
-		browserOptions.executablePath = options.browserExecutablePath || "chrome";
+		browserOptions.executablePath = options.browserExecutablePath || "safari";
 	}
 	return browserOptions;
 }
