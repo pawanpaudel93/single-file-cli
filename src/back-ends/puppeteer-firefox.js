@@ -24,7 +24,7 @@
 /* global singlefile, require, exports */
 
 const puppeteer = require("puppeteer-core");
-const scripts = require("./common/scripts.js");
+const scripts = require("./common/scripts");
 
 const EXECUTION_CONTEXT_DESTROYED_ERROR = "Execution context was destroyed";
 const NETWORK_IDLE_STATE = "networkidle0";

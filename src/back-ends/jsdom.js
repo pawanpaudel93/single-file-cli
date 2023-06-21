@@ -48,7 +48,7 @@ exports.closeBrowser = () => { };
 
 async function getPageData(win, options) {
 	const doc = win.document;
-	const scripts = await require("./common/scripts.js").get(options);
+	const scripts = await require("./common/scripts").get(options);
 	win.TextDecoder = class {
 		constructor(utfLabel) {
 			this.utfLabel = utfLabel;

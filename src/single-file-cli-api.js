@@ -25,7 +25,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const scripts = require("./back-ends/common/scripts.js");
+const scripts = require("./back-ends/common/scripts");
 const VALID_URL_TEST = /^(https?|file):\/\//;
 
 const DEFAULT_OPTIONS = {
@@ -76,14 +76,14 @@ const STATE_PROCESSING = "processing";
 const STATE_PROCESSED = "processed";
 
 const backEnds = {
-	jsdom: "./back-ends/jsdom.js",
-	puppeteer: "./back-ends/puppeteer.js",
-	"puppeteer-firefox": "./back-ends/puppeteer-firefox.js",
-	"webdriver-chromium": "./back-ends/webdriver-chromium.js",
-	"webdriver-gecko": "./back-ends/webdriver-gecko.js",
-	"playwright-firefox": "./back-ends/playwright-firefox.js",
-	"playwright-chromium": "./back-ends/playwright-chromium.js",
-	"playwright-webkit": "./back-ends/playwright-webkit.js"
+	jsdom: "./back-ends/jsdom",
+	puppeteer: "./back-ends/puppeteer",
+	"puppeteer-firefox": "./back-ends/puppeteer-firefox",
+	"webdriver-chromium": "./back-ends/webdriver-chromium",
+	"webdriver-gecko": "./back-ends/webdriver-gecko",
+	"playwright-firefox": "./back-ends/playwright-firefox",
+	"playwright-chromium": "./back-ends/playwright-chromium",
+	"playwright-webkit": "./back-ends/playwright-webkit"
 };
 
 let backend, tasks = [], maxParallelWorkers = 8, sessionFilename;

@@ -24,7 +24,7 @@
 /* global singlefile, require, exports */
 
 const playwright = require("playwright").chromium;
-const scripts = require("./common/scripts.js");
+const scripts = require("./common/scripts");
 
 const NETWORK_IDLE_STATE = "networkidle";
 

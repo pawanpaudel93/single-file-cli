@@ -108,7 +108,7 @@ async function getPageData(driver, options) {
 			window.setSize(options.browserWidth, options.browserHeight);
 		}
 	}
-	const scripts = await require("./common/scripts.js").get(options);
+	const scripts = await require("./common/scripts").get(options);
 	if (options.browserDebug) {
 		// await driver.sleep(3000);
 	}
