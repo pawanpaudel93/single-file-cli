@@ -24,6 +24,7 @@
 /* global require, exports, singlefile, XMLHttpRequest */
 
 const fs = require("fs");
+const {resolve} = require('path');
 
 const SCRIPTS = [
 	"lib/single-file.js",
@@ -82,8 +83,9 @@ async function readScriptFiles(paths) {
 }
 
 function readScriptFile(path) {
+	const resolvedPath = resolve(__dirname, path);
 	return new Promise((resolve, reject) =>
-		fs.readFile(require.resolve("./" + path), (err, data) => {
+		fs.readFile(resolvedPath, (err, data) => {
 			if (err) {
 				reject(err);
 			} else {
