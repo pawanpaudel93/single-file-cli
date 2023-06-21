@@ -15,7 +15,7 @@ module.exports = {
 		"sourceType": "module"
 	},
 	"ignorePatterns": [
-		"/lib/"
+		"src/lib/"
 	],
 	"rules": {
 		"indent": [

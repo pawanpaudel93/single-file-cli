@@ -7,7 +7,7 @@ const EXTERNAL = ["single-file-core"];
 export default [{
 	input: ["single-file-core/single-file.js"],
 	output: [{
-		file: "lib/single-file.js",
+		file: "src/back-ends/common/lib/single-file.js",
 		format: "umd",
 		name: "singlefile",
 		plugins: [terser()]
@@ -17,7 +17,7 @@ export default [{
 }, {
 	input: ["single-file-core/single-file-frames.js"],
 	output: [{
-		file: "lib/single-file-frames.js",
+		file: "src/back-ends/common/lib/single-file-frames.js",
 		format: "umd",
 		name: "singlefile",
 		plugins: [terser()]
@@ -27,7 +27,7 @@ export default [{
 }, {
 	input: ["single-file-core/single-file-bootstrap.js"],
 	output: [{
-		file: "lib/single-file-bootstrap.js",
+		file: "src/back-ends/common/lib/single-file-bootstrap.js",
 		format: "umd",
 		name: "singlefileBootstrap",
 		plugins: [terser()]
@@ -37,7 +37,7 @@ export default [{
 }, {
 	input: ["single-file-core/single-file-hooks-frames.js"],
 	output: [{
-		file: "lib/single-file-hooks-frames.js",
+		file: "src/back-ends/common/lib/single-file-hooks-frames.js",
 		format: "iife",
 		plugins: [terser()]
 	}],
@@ -46,7 +46,7 @@ export default [{
 }, {
 	input: ["single-file-core/single-file-infobar.js"],
 	output: [{
-		file: "lib/single-file-infobar.js",
+		file: "src/back-ends/common/lib/single-file-infobar.js",
 		format: "iife",
 		plugins: [terser()]
 	}],

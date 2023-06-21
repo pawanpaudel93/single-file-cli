@@ -31,8 +31,6 @@ const SCRIPTS = [
 	"lib/single-file-hooks-frames.js"
 ];
 
-const basePath = "./../../";
-
 function initSingleFile() {
 	singlefile.init({
 		fetch: (url, options) => {
@@ -65,7 +63,7 @@ function initSingleFile() {
 
 exports.get = async options => {
 	let scripts = "let _singleFileDefine; if (typeof define !== 'undefined') { _singleFileDefine = define; define = null }";
-	scripts += await readScriptFiles(SCRIPTS, basePath);
+	scripts += await readScriptFiles(SCRIPTS);
 	scripts += await readScriptFiles(options && options.browserScripts ? options.browserScripts : [], "");
 	if (options.browserStylesheets && options.browserStylesheets.length) {
 		scripts += "addEventListener(\"load\",()=>{const styleElement=document.createElement(\"style\");styleElement.textContent=" + JSON.stringify(await readScriptFiles(options.browserStylesheets, "")) + ";document.body.appendChild(styleElement);});";
@@ -76,16 +74,16 @@ exports.get = async options => {
 };
 
 exports.getInfobarScript = () => {
-	return readScriptFile("lib/single-file-infobar.js", basePath);
+	return readScriptFile("lib/single-file-infobar.js");
 };
 
-async function readScriptFiles(paths, basePath = "../../../") {
-	return (await Promise.all(paths.map(path => readScriptFile(path, basePath)))).join("");
+async function readScriptFiles(paths) {
+	return (await Promise.all(paths.map(path => readScriptFile(path)))).join("");
 }
 
-function readScriptFile(path, basePath) {
+function readScriptFile(path) {
 	return new Promise((resolve, reject) =>
-		fs.readFile(basePath ? require.resolve(basePath + path) : path, (err, data) => {
+		fs.readFile(require.resolve("./" + path), (err, data) => {
 			if (err) {
 				reject(err);
 			} else {

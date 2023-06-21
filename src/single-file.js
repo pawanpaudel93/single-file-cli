@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
  * Copyright 2010-2020 Gildas Lormeau
  * contact : gildas.lormeau <at> gmail.com
@@ -27,9 +25,7 @@
 
 const fileUrl = require("file-url");
 const fs = require("fs");
-const api = require("./single-file-cli-api");
-run(require("./args"))
-	.catch(error => console.error(error.message || error)); // eslint-disable-line no-console	
+const api = require("./single-file-cli-api");	
 
 async function run(options) {
 	let urls;
@@ -79,3 +75,5 @@ function parseCookies(textValue) {
 		})
 		.filter(cookieData => cookieData);
 }
+
+exports.runBrowser = run

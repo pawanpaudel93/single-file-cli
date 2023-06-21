@@ -1,25 +1,22 @@
 {
-	"name": "single-file-cli",
-	"version": "1.0.40",
-	"description": "SingleFile CLI",
+	"name": "@pawanpaudel93/single-file",
+	"version": "1.0.0",
+	"description": "SingleFile",
 	"author": "Gildas Lormeau",
 	"license": "AGPL-3.0-or-later",
-	"main": "single-file-cli-api.js",
-	"bin": {
-		"single-file": "./single-file"
-	},
+	"main": "src/index.js",
 	"scripts": {
-		"build": "./build-lib.sh",
-		"prepublishOnly": "./build-lib.sh"
+		"build": "yarn && yarn upgrade && rollup -c rollup.config.js",
+		"prepublishOnly": "npm run build"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/gildas-lormeau/single-file-cli.git"
+		"url": "git+https://github.com/pawanpaudel93/single-file-cli.git"
 	},
 	"bugs": {
-		"url": "https://github.com/gildas-lormeau/single-file-cli/issues"
+		"url": "https://github.com/pawanpaudel93/single-file-cli/issues"
 	},
-	"homepage": "https://github.com/gildas-lormeau/single-file-cli#readme",
+	"homepage": "https://github.com/pawanpaudel93/single-file-cli#readme",
 	"dependencies": {
 		"file-url": "3.0.0",
 		"iconv-lite": "0.6.3",
