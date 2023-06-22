@@ -1,5 +1,2 @@
-const args = require("./args")
-const singlefile = require("./single-file")
-
-exports.defaultArgs = args
-exports.runBrowser = singlefile.runBrowser
+export {defaultArgs} from "./args"
+export {runBrowser} from "./single-file"

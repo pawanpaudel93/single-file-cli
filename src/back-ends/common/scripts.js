@@ -21,10 +21,14 @@
  *   Source.
  */
 
-/* global require, exports, singlefile, XMLHttpRequest */
+/* global singlefile, XMLHttpRequest */
 
-const fs = require("fs");
-const {resolve} = require('path');
+import fs from "fs";
+import {resolve} from 'path';
+import { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const _dirname = typeof __dirname !== 'undefined' ? __dirname : dirname(fileURLToPath(import.meta.url))
 
 const SCRIPTS = [
 	"lib/single-file.js",
@@ -62,7 +66,7 @@ function initSingleFile() {
 	});
 }
 
-exports.get = async options => {
+export const get = async options => {
 	let scripts = "let _singleFileDefine; if (typeof define !== 'undefined') { _singleFileDefine = define; define = null }";
 	scripts += await readScriptFiles(SCRIPTS);
 	scripts += await readScriptFiles(options && options.browserScripts ? options.browserScripts : [], "");
@@ -74,7 +78,7 @@ exports.get = async options => {
 	return scripts;
 };
 
-exports.getInfobarScript = () => {
+export const getInfobarScript = () => {
 	return readScriptFile("lib/single-file-infobar.js");
 };
 

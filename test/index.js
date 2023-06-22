@@ -1,5 +1,5 @@
-const {defaultArgs, runBrowser} = require("../src")
-const {promises} = require("fs")
+import {defaultArgs, runBrowser} from "../src"
+import {promises} from "fs"
 
 async function main() {
     const outputDirectory = "./output"

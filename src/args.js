@@ -21,314 +21,86 @@
  *   Source.
  */
 
-/* global require, module */
-
-const args = require("yargs")
-	.wrap(null)
-	.command("$0 [url] [output]", "Save a page into a single HTML file.", yargs => {
-		yargs.positional("url", { description: "URL or path on the filesystem of the page to save", type: "string" });
-		yargs.positional("output", { description: "Output filename", type: "string" });
-	})
-	.default({
-		"accept-headers": {
-			"font": "application/font-woff2;q=1.0,application/font-woff;q=0.9,*/*;q=0.8",
-			"image": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-			"stylesheet": "text/css,*/*;q=0.1",
-			"script": "*/*",
-			"document": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-		},
-		"back-end": "puppeteer",
-		"base-path": "",
-		"block-mixed-content": false,
-		"browser-server": "",
-		"browser-headless": true,
-		"browser-executable-path": "",
-		"browser-width": 1280,
-		"browser-height": 720,
-		"browser-load-max-time": 60000,
-		"browser-wait-delay": 0,
-		"browser-wait-until": "networkidle0",
-		"browser-wait-until-fallback": true,
-		"browser-debug": false,
-		"browser-script": [],
-		"browser-stylesheet": [],
-		"browser-args": "",
-		"browser-start-minimized": false,
-		"browser-cookie": [],
-		"browser-cookies-file": "",
-		"browser-ignore-insecure-certs": false,
-		"compress-CSS": false,
-		"compress-HTML": true,
-		"dump-content": false,
-		"emulateMediaFeature": [],
-		"filename-template": "{page-title} ({date-iso} {time-locale}).html",
-		"filename-conflict-action": "uniquify",
-		"filename-replacement-character": "_",
-		"filename-max-length": 192,
-		"filename-max-length-unit": "bytes",
-		"group-duplicate-images": true,
-		"max-size-duplicate-images": 512 * 1024,
-		"http-header": [],
-		"http-proxy-server": "",
-		"http-proxy-username": "",
-		"http-proxy-password": "",
-		"include-infobar": false,
-		"insert-meta-csp": true,
-		"load-deferred-images": true,
-		"load-deferred-images-dispatch-scroll-event": false,
-		"load-deferred-images-max-idle-time": 1500,
-		"load-deferred-images-keep-zoom-level": false,
-		"max-parallel-workers": 8,
-		"max-resource-size-enabled": false,
-		"max-resource-size": 10,
-		"move-styles-in-head": false,
-		"output-directory": "",
-		"remove-hidden-elements": true,
-		"remove-unused-styles": true,
-		"remove-unused-fonts": true,
-		"remove-saved-date": false,
-		"remove-frames": false,
-		"block-scripts": true,
-		"block-audios": true,
-		"block-videos": true,
-		"remove-alternative-fonts": true,
-		"remove-alternative-medias": true,
-		"remove-alternative-images": true,
-		"save-original-urls": false,
-		"save-raw-page": false,
-		"web-driver-executable-path": "",
-		"user-script-enabled": true,
-		"include-BOM": false,
-		"crawl-links": false,
-		"crawl-inner-links-only": true,
-		"crawl-remove-url-fragment": true,
-		"crawl-max-depth": 1,
-		"crawl-external-links-max-depth": 1,
-		"crawl-replace-urls": false,
-		"crawl-rewrite-rule": []
-	})
-	.options("back-end", { description: "Back-end to use" })
-	.choices("back-end", ["jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium", "playwright-webkit"])
-	.options("base-path", { description: "Base path for storing html, screenshot and metadata" })
-	.string("base-path")
-	.options("block-audios", { description: "Block audios" })
-	.boolean("block-audios")
-	.options("block-fonts", { description: "Block fonts" })
-	.boolean("block-fonts")
-	.options("block-images", { description: "Block images" })
-	.boolean("block-images")
-	.options("block-scripts", { description: "Block scripts" })
-	.boolean("block-scripts")
-	.options("block-videos", { description: "Block videos" })
-	.boolean("block-videos")
-	.options("block-mixed-content", { description: "Block mixed contents" })
-	.boolean("block-mixed-content")
-	.options("browser-server", { description: "Server to connect to (puppeteer only for now)" })
-	.string("browser-server")
-	.options("browser-headless", { description: "Run the browser in headless mode (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.boolean("browser-headless")
-	.options("browser-executable-path", { description: "Path to chrome/chromium executable (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.string("browser-executable-path")
-	.options("browser-width", { description: "Width of the browser viewport in pixels" })
-	.number("browser-width")
-	.options("browser-height", { description: "Height of the browser viewport in pixels" })
-	.number("browser-height")
-	.options("browser-load-max-time", { description: "Maximum delay of time to wait for page loading in ms (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.number("browser-load-max-time")
-	.options("browser-wait-delay", { description: "Time to wait before capturing the page in ms" })
-	.number("browser-wait-delay")
-	.options("browser-wait-until", { description: "When to consider the page is loaded (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.choices("browser-wait-until", ["networkidle0", "networkidle2", "load", "domcontentloaded"])
-	.options("browser-wait-until-fallback", { description: "Retry with the next value of --browser-wait-until when a timeout error is thrown" })
-	.boolean("browser-wait-until-fallback")
-	.options("browser-debug", { description: "Enable debug mode (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.boolean("browser-debug")
-	.options("browser-script", { description: "Path of a script executed in the page (and all the frames) before it is loaded" })
-	.array("browser-script")
-	.options("browser-stylesheet", { description: "Path of a stylesheet file inserted into the page (and all the frames) after it is loaded" })
-	.array("browser-stylesheet")
-	.options("browser-args", { description: "Arguments provided as a JSON array and passed to the browser (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.string("browser-args")
-	.options("browser-start-minimized", { description: "Minimize the browser (puppeteer)" })
-	.boolean("browser-start-minimized")
-	.options("browser-cookie", { description: "Ordered list of cookie parameters separated by a comma: name,value,domain,path,expires,httpOnly,secure,sameSite,url (puppeteer, webdriver-gecko, webdriver-chromium, jsdom)" })
-	.array("browser-cookie")
-	.options("browser-cookies-file", { description: "Path of the cookies file formatted as a JSON file or a Netscape text file (puppeteer, webdriver-gecko, webdriver-chromium, jsdom)" })
-	.string("browser-cookies-file")
-	.options("browser-ignore-insecure-certs", { description: "Ignore HTTPs errors" })
-	.boolean("browser-ignore-insecure-certs")
-	.options("compress-CSS", { description: "Compress CSS stylesheets" })
-	.boolean("compress-CSS")
-	.options("compress-HTML", { description: "Compress HTML content" })
-	.boolean("compress-HTML")
-	.options("crawl-links", { description: "Crawl and save pages found via inner links" })
-	.boolean("crawl-links")
-	.options("crawl-inner-links-only", { description: "Crawl pages found via inner links only if they are hosted on the same domain" })
-	.boolean("crawl-inner-links-only")
-	.options("crawl-no-parent", { description: "Crawl pages found via inner links only if their URLs are not parent of the URL to crawl" })
-	.boolean("crawl-no-parent")
-	.options("crawl-load-session", { description: "Name of the file of the session to load (previously saved with --crawl-save-session or --crawl-sync-session)" })
-	.string("crawl-load-session")
-	.options("crawl-remove-url-fragment", { description: "Remove URL fragments found in links" })
-	.boolean("crawl-remove-url-fragment")
-	.options("crawl-save-session", { description: "Name of the file where to save the state of the session" })
-	.string("crawl-save-session")
-	.options("crawl-sync-session", { description: "Name of the file where to load and save the state of the session" })
-	.string("crawl-sync-session")
-	.options("crawl-max-depth", { description: "Max depth when crawling pages found in internal and external links (0: infinite)" })
-	.number("crawl-max-depth")
-	.options("crawl-external-links-max-depth", { description: "Max depth when crawling pages found in external links (0: infinite)" })
-	.number("crawl-external-links-max-depth")
-	.options("crawl-replace-urls", { description: "Replace URLs of saved pages with relative paths of saved pages on the filesystem" })
-	.boolean("crawl-replace-urls")
-	.options("crawl-rewrite-rule", { description: "Rewrite rule used to rewrite URLs of crawled pages" })
-	.array("crawl-rewrite-rule")
-	.options("dump-content", { description: "Dump the content of the processed page in the console ('true' when running in Docker)" })
-	.boolean("dump-content")
-	.options("emulate-media-feature", { description: "Emulate a media feature. The syntax is <name>:<value>, e.g. \"prefers-color-scheme:dark\" (puppeteer)" })
-	.array("emulate-media-feature")
-	.options("error-file")
-	.string("error-file")
-	.options("filename-template", { description: "Template used to generate the output filename (see help page of the extension for more info)" })
-	.string("filename-template")
-	.options("filename-conflict-action", { description: "Action when the filename is conflicting with existing one on the filesystem. The possible values are \"uniquify\" (default), \"overwrite\" and \"skip\"" })
-	.string("filename-conflict-action")
-	.options("filename-replacement-character", { description: "The character used for replacing invalid characters in filenames" })
-	.string("filename-replacement-character")
-	.options("filename-max-length", { description: "Specify the maximum length of the filename" })
-	.number("filename-max-length")
-	.options("filename-max-length-unit", { description: "Specify the unit of the maximum length of the filename ('bytes' or 'chars')" })
-	.string("filename-max-length-unit")
-	.options("group-duplicate-images", { description: "Group duplicate images into CSS custom properties" })
-	.boolean("group-duplicate-images")
-	.options("max-size-duplicate-images", { description: "Maximum sie in bytes of duplicate images stored as CSS custom properties" })
-	.number("max-size-duplicate-images")
-	.options("http-header", { description: "Extra HTTP header (puppeteer, jsdom)" })
-	.array("http-header")
-	.options("http-proxy-server", { description: "Proxy address (puppeteer)" })
-	.string("http-proxy-server")
-	.options("http-proxy-username", { description: "HTTP username (puppeteer)" })
-	.string("http-proxy-username")
-	.options("http-proxy-password", { description: "HTTP password (puppeteer)" })
-	.string("http-proxy-password")
-	.options("include-BOM", { description: "Include the UTF-8 BOM into the HTML page" })
-	.boolean("include-BOM")
-	.options("include-infobar", { description: "Include the infobar" })
-	.boolean("include-infobar")
-	.options("insert-meta-csp", { description: "Include a <meta> tag with a CSP to avoid potential requests to internet when viewing a page" })
-	.boolean("insert-meta-csp")
-	.options("load-deferred-images", { description: "Load deferred (a.k.a. lazy-loaded) images (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.boolean("load-deferred-images")
-	.options("load-deferred-images-dispatch-scroll-event", { description: "Dispatch 'scroll' event when loading deferred images" })
-	.boolean("load-deferred-images-dispatch-scroll-event")
-	.options("load-deferred-images-max-idle-time", { description: "Maximum delay of time to wait for deferred images in ms (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.number("load-deferred-images-max-idle-time")
-	.options("load-deferred-images-keep-zoom-level", { description: "Load deferred images by keeping zoomed out the page" })
-	.boolean("load-deferred-images-keep-zoom-level")
-	.options("max-parallel-workers", { description: "Maximum number of browsers launched in parallel when processing a list of URLs (cf --urls-file)" })
-	.number("max-parallel-workers")
-	.options("max-resource-size-enabled", { description: "Enable removal of embedded resources exceeding a given size" })
-	.boolean("max-resource-size-enabled")
-	.options("max-resource-size", { description: "Maximum size of embedded resources in MB (i.e. images, stylesheets, scripts and iframes)" })
-	.number("max-resource-size")
-	.options("move-styles-in-head", { description: "Move style elements outside the head element into the head element" })
-	.boolean("move-styles-in-head")
-	.options("remove-frames", { description: "Remove frames (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.boolean("remove-frames")
-	.options("remove-hidden-elements", { description: "Remove HTML elements which are not displayed" })
-	.boolean("remove-hidden-elements")
-	.options("remove-unused-styles", { description: "Remove unused CSS rules and unneeded declarations" })
-	.boolean("remove-unused-styles")
-	.options("remove-unused-fonts", { description: "Remove unused CSS font rules" })
-	.boolean("remove-unused-fonts")
-	.options("remove-saved-date", { description: "Remove saved date metadata in HTML header" })
-  .boolean("remove-saved-date")
-	.options("block-scripts", { description: "Block scripts" })
-	.boolean("block-scripts")
-	.options("block-audios", { description: "Block audio elements" })
-	.boolean("block-audios")
-	.options("block-videos", { description: "Block video elements" })
-	.boolean("block-videos")
-	.options("remove-alternative-fonts", { description: "Remove alternative fonts to the ones displayed" })
-	.boolean("remove-alternative-fonts")
-	.options("remove-alternative-medias", { description: "Remove alternative CSS stylesheets" })
-	.boolean("remove-alternative-medias")
-	.options("remove-alternative-images", { description: "Remove images for alternative sizes of screen" })
-	.boolean("remove-alternative-images")
-	.options("save-original-urls", { description: "Save the original URLS in the embedded contents" })
-	.boolean("save-original-urls")
-	.options("save-raw-page", { description: "Save the original page without interpreting it into the browser (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.boolean("save-raw-page")
-	.options("urls-file", { description: "Path to a text file containing a list of URLs (separated by a newline) to save" })
-	.string("urls-file")
-	.options("user-agent", { description: "User-agent of the browser (puppeteer, webdriver-gecko, webdriver-chromium)" })
-	.string("user-agent")
-	.options("user-script-enabled", { description: "Enable the event API allowing to execute scripts before the page is saved" })
-	.boolean("user-script-enabled")
-	.options("web-driver-executable-path", { description: "Path to Selenium WebDriver executable (webdriver-gecko, webdriver-chromium)" })
-	.string("web-driver-executable-path")
-	.options("output-directory", { description: "Path to where to save files, this path must exist." })
-	.string("output-directory")
-	.argv;
-args.backgroundSave = true;
-args.compressCSS = args.compressCss;
-args.compressHTML = args.compressHtml;
-args.includeBOM = args.includeBom;
-args.crawlReplaceURLs = args.crawlReplaceUrls;
-args.crawlRemoveURLFragment = args.crawlRemoveUrlFragment;
-args.insertMetaCSP = args.insertMetaCsp;
-args.saveOriginalURLs = args.saveOriginalUrls;
-if (args.removeScripts) {
-	args.blockScripts = true;
+export const defaultArgs = {
+  acceptHeaders: {
+    font: 'application/font-woff2;q=1.0,application/font-woff;q=0.9,*/*;q=0.8',
+    image: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+    stylesheet: 'text/css,*/*;q=0.1',
+    script: '*/*',
+    document: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+  },
+  backEnd: 'puppeteer', // Back-end to use (choices: "jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium", "playwright-webkit")
+  basePath: '', // Base path for storing html, screenshot, and metadata
+  blockMixedContent: false, // Block mixed contents
+  browserServer: '', // Server to connect to (puppeteer only for now)
+  browserHeadless: true, // Run the browser in headless mode (puppeteer, webdriver-gecko, webdriver-chromium)
+  browserExecutablePath: '', // Path to chrome/chromium executable (puppeteer, webdriver-gecko, webdriver-chromium)
+  browserWidth: 1280, // Width of the browser viewport in pixels
+  browserHeight: 720, // Height of the browser viewport in pixels
+  browserLoadMaxTime: 60000, // Maximum delay of time to wait for page loading in ms (puppeteer, webdriver-gecko, webdriver-chromium)
+  browserWaitDelay: 0, // Time to wait before capturing the page in ms
+  browserWaitUntil: 'networkidle0', // When to consider the page is loaded (puppeteer, webdriver-gecko, webdriver-chromium) (choices: "networkidle0", "networkidle2", "load", "domcontentloaded")
+  browserWaitUntilFallback: true, // Retry with the next value of --browser-wait-until when a timeout error is thrown
+  browserDebug: false, // Enable debug mode (puppeteer, webdriver-gecko, webdriver-chromium)
+  browserArgs: '', // Arguments provided as a JSON array and passed to the browser (puppeteer, webdriver-gecko, webdriver-chromium)
+  browserStartMinimized: false, // Minimize the browser (puppeteer)
+  browserCookiesFile: '', // Path of the cookies file formatted as a JSON file or a Netscape text file (puppeteer, webdriver-gecko, webdriver-chromium, jsdom)
+  browserIgnoreInsecureCerts: false, // Ignore HTTPs errors
+  compressCSS: undefined, // Compress CSS stylesheets
+  compressHTML: undefined, // Compress HTML content
+  dumpContent: false, // Dump the content of the processed page in the console ('true' when running in Docker)
+  filenameTemplate: '{page-title} ({date-iso} {time-locale}).html', // Template used to generate the output filename (see help page of the extension for more info)
+  filenameConflictAction: 'uniquify', // Action when the filename is conflicting with an existing one on the filesystem. The possible values are "uniquify" (default), "overwrite", and "skip"
+  filenameReplacementCharacter: '_', // The character used for replacing invalid characters in filenames
+  filenameMaxLength: 192, // Specify the maximum length of the filename
+  filenameMaxLengthUnit: 'bytes', // Specify the unit of the maximum length of the filename ('bytes' or 'chars')
+  groupDuplicateImages: true, // Group duplicate images into CSS custom properties
+  maxSizeDuplicateImages: 524288, // Maximum size in bytes of duplicate images stored as CSS custom properties
+  httpProxyServer: '', // Proxy address (puppeteer)
+  httpProxyUsername: '', // HTTP username (puppeteer)
+  httpProxyPassword: '', // HTTP password (puppeteer)
+  includeInfobar: false, // Include the infobar
+  insertMetaCsp: true, // Include a <meta> tag with a CSP to avoid potential requests to the internet when viewing a page
+  loadDeferredImages: true, // Load deferred (a.k.a. lazy-loaded) images (puppeteer, webdriver-gecko, webdriver-chromium)
+  loadDeferredImagesDispatchScrollEvent: false, // Dispatch 'scroll' event when loading deferred images
+  loadDeferredImagesMaxIdleTime: 1500, // Maximum delay of time to wait for deferred images in ms (puppeteer, webdriver-gecko, webdriver-chromium)
+  loadDeferredImagesKeepZoomLevel: false, // Load deferred images by keeping the page zoomed out
+  maxParallelWorkers: 8, // Maximum number of browsers launched in parallel when processing a list of URLs
+  maxResourceSizeEnabled: false, // Enable removal of embedded resources exceeding a given size
+  maxResourceSize: 10, // Maximum size of embedded resources in MB (images, stylesheets, scripts, and iframes)
+  moveStylesInHead: false, // Move style elements outside the head element into the head element
+  outputDirectory: '', // Path to where to save files, this path must exist
+  removeHiddenElements: true, // Remove HTML elements that are not displayed
+  removeUnusedStyles: true, // Remove unused CSS rules and unneeded declarations
+  removeUnusedFonts: true, // Remove unused CSS font rules
+  removeSavedDate: false, // Remove saved date metadata in HTML header
+  removeFrames: false, // Remove frames (puppeteer, webdriver-gecko, webdriver-chromium)
+  blockScripts: true, // Block scripts
+  blockAudios: true, // Block audio elements
+  blockVideos: true, // Block video elements
+  removeAlternativeFonts: true, // Remove alternative fonts to the ones displayed
+  removeAlternativeMedias: true, // Remove alternative CSS stylesheets
+  removeAlternativeImages: true, // Remove images for alternative sizes of the screen
+  saveOriginalUrls: false, // Save the original URLs in the embedded contents
+  saveRawPage: false, // Save the original page without interpreting it into the browser (puppeteer, webdriver-gecko, webdriver-chromium)
+  webDriverExecutablePath: '', // Path to Selenium WebDriver executable (webdriver-gecko, webdriver-chromium)
+  userScriptEnabled: true, // Enable the event API allowing to execute scripts before the page is saved
+  includeBOM: undefined, // Include the UTF-8 BOM into the HTML page
+  crawlLinks: false, // Crawl and save pages found via inner links
+  crawlInnerLinksOnly: true, // Crawl pages found via inner links only if they are hosted on the same domain
+  crawlRemoveUrlFragment: true, // Remove URL fragments found in links
+  crawlMaxDepth: 1, // Max depth when crawling pages found in internal and external links (0: infinite)
+  crawlExternalLinksMaxDepth: 1, // Max depth when crawling pages found in external links (0: infinite)
+  crawlReplaceUrls: false, // Replace URLs of saved pages with relative paths of saved pages on the filesystem
+  backgroundSave: true, // Enable background saving
+  crawlReplaceURLs: false, // Replace URLs of saved pages with relative paths of saved pages on the filesystem
+  crawlRemoveURLFragment: true, // Remove URL fragments found in links
+  insertMetaCSP: true, // Include a <meta> tag with a Content Security Policy (CSP) to avoid potential requests to the internet when viewing a page
+  saveOriginalURLs: false, // Save the original URLs in the embedded contents
+  httpHeaders: {}, // Extra HTTP headers
+  browserCookies: [], // Ordered list of cookie parameters
+  browserScripts: [], // Paths of scripts executed in the page before it is loaded
+  browserStylesheets: [], // Paths of stylesheet files inserted into the page after it is loaded
+  crawlRewriteRules: [], // Rewrite rules used to rewrite URLs of crawled pages
+  emulateMediaFeatures: [] // Emulate media features
 }
-if (args.removeAudioSrc) {
-	args.blockAudios = true;
-}
-if (args.removeVideoSrc) {
-	args.blockVideos = true;
-}
-const headers = args.httpHeader;
-delete args.httpHeader;
-args.httpHeaders = {};
-headers.forEach(header => {
-	const matchedHeader = header.match(/^(.*?):(.*)$/);
-	if (matchedHeader.length == 3) {
-		args.httpHeaders[matchedHeader[1].trim()] = matchedHeader[2].trimLeft();
-	}
-});
-const cookies = args.browserCookie;
-delete args.browserCookie;
-args.browserCookies = cookies.map(cookieValue => {
-	const value = cookieValue.split(/(?<!\\),/);
-	return {
-		name: value[0],
-		value: value[1],
-		domain: value[2] || undefined,
-		path: value[3] || undefined,
-		expires: value[4] && Number(value[4]) || undefined,
-		httpOnly: value[5] && value[5] == "true" || undefined,
-		secure: value[6] && value[5] == "true" || undefined,
-		sameSite: value[7] || undefined,
-		url: value[8] || undefined
-	};
-});
-args.browserScripts = args.browserScript;
-delete args.browserScript;
-args.browserStylesheets = args.browserStylesheet;
-delete args.browserStylesheet;
-args.crawlRewriteRules = args.crawlRewriteRule;
-delete args.crawlRewriteRule;
-args.emulateMediaFeatures = args.emulateMediaFeature
-	.map(value => {
-		const splitValue = value.match(/^([^:]+):(.*)$/);
-		if (splitValue.length >= 3) {
-			return { name: splitValue[1].trim(), value: splitValue[2].trim() };
-		}
-	})
-	.filter(identity => identity);
-delete args.emulateMediaFeature;
-Object.keys(args).filter(optionName => optionName.includes("-"))
-	.forEach(optionName => delete args[optionName]);
-delete args["$0"];
-delete args["_"];
-module.exports = args;

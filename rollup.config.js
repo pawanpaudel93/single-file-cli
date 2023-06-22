@@ -15,16 +15,6 @@ export default [{
 	plugins: PLUGINS,
 	external: EXTERNAL
 }, {
-	input: ["single-file-core/single-file-frames.js"],
-	output: [{
-		file: "src/back-ends/common/lib/single-file-frames.js",
-		format: "umd",
-		name: "singlefile",
-		plugins: [terser()]
-	}],
-	plugins: PLUGINS,
-	external: EXTERNAL
-}, {
 	input: ["single-file-core/single-file-bootstrap.js"],
 	output: [{
 		file: "src/back-ends/common/lib/single-file-bootstrap.js",

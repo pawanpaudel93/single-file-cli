@@ -21,14 +21,16 @@
  *   Source.
  */
 
-/* global require, exports, URL */
+/* global URL */
 
-const fs = require("fs");
-const path = require("path");
-const scripts = require("./back-ends/common/scripts");
-const VALID_URL_TEST = /^(https?|file):\/\//;
+import fs from "fs";
+import path from "path";
+import {getInfobarScript} from "./back-ends/common/scripts";
+import {initialize as puppeteerInitialize, closeBrowser, getPageData} from "./back-ends/puppeteer"
 
-const DEFAULT_OPTIONS = {
+export const VALID_URL_TEST = /^(https?|file):\/\//;
+
+export const DEFAULT_OPTIONS = {
 	basePath: "",
 	removeHiddenElements: true,
 	removeUnusedStyles: true,
@@ -75,29 +77,12 @@ const DEFAULT_OPTIONS = {
 const STATE_PROCESSING = "processing";
 const STATE_PROCESSED = "processed";
 
-const backEnds = {
-	jsdom: "./back-ends/jsdom",
-	puppeteer: "./back-ends/puppeteer",
-	"puppeteer-firefox": "./back-ends/puppeteer-firefox",
-	"webdriver-chromium": "./back-ends/webdriver-chromium",
-	"webdriver-gecko": "./back-ends/webdriver-gecko",
-	"playwright-firefox": "./back-ends/playwright-firefox",
-	"playwright-chromium": "./back-ends/playwright-chromium",
-	"playwright-webkit": "./back-ends/playwright-webkit"
-};
+let tasks = [], maxParallelWorkers = 8, sessionFilename;
 
-let backend, tasks = [], maxParallelWorkers = 8, sessionFilename;
-
-exports.getBackEnd = backEndName => require(backEnds[backEndName]);
-exports.DEFAULT_OPTIONS = DEFAULT_OPTIONS;
-exports.VALID_URL_TEST = VALID_URL_TEST;
-exports.initialize = initialize;
-
-async function initialize(options) {
+export async function initialize(options) {
 	options = Object.assign({}, DEFAULT_OPTIONS, options);
 	maxParallelWorkers = options.maxParallelWorkers;
-	backend = require(backEnds[options.backEnd]);
-	await backend.initialize(options);
+	await puppeteerInitialize(options);
 	if (options.crawlSyncSession || options.crawlLoadSession) {
 		try {
 			tasks = JSON.parse(fs.readFileSync(options.crawlSyncSession || options.crawlLoadSession).toString());
@@ -151,7 +136,7 @@ async function finish(options) {
 		});
 	}
 	if (!options.browserDebug) {
-		return backend.closeBrowser();
+		return closeBrowser();
 	}
 }
 
@@ -253,7 +238,7 @@ function getHostURL(url) {
 async function capturePage(options) {
 	try {
 		let filename;
-		const pageData = await backend.getPageData(options);
+		const pageData = await getPageData(options);
 		if (options.includeInfobar) {
 			await includeInfobarScript(pageData);
 		}
@@ -321,6 +306,6 @@ function escapeRegExp(string) {
 }
 
 async function includeInfobarScript(pageData) {
-	const infobarContent = await scripts.getInfobarScript();
+	const infobarContent = await getInfobarScript();
 	pageData.content += "<script>document.currentScript.remove();" + infobarContent + "</script>";
 }

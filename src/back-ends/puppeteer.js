@@ -21,12 +21,12 @@
  *   Source.
  */
 
-/* global singlefile, require, exports */
+/* global singlefile */
 
-const puppeteer = require("puppeteer-core");
-const scripts = require("./common/scripts");
-const path = require("path");
-const fsPromises =  require("node:fs/promises");
+import puppeteer from "puppeteer-core";
+import {get} from "./common/scripts";
+import path from "path";
+import fsPromises from "node:fs/promises";
 
 const EXECUTION_CONTEXT_DESTROYED_ERROR = "Execution context was destroyed";
 const NETWORK_IDLE_STATE = "networkidle0";
@@ -34,7 +34,7 @@ const NETWORK_STATES = ["networkidle0", "networkidle2", "load", "domcontentloade
 
 let browser, context;
 
-exports.initialize = async options => {
+export const initialize = async options => {
 	if (options.browserServer) {
 		browser = await puppeteer.connect({ browserWSEndpoint: options.browserServer });
 	} else {
@@ -43,7 +43,7 @@ exports.initialize = async options => {
 	return browser;
 };
 
-exports.getPageData = async (options, page) => {
+export const getPageData = async (options, page) => {
 	const privatePage = !page;
 	try {
 		if (privatePage) {
@@ -55,7 +55,7 @@ exports.getPageData = async (options, page) => {
 			page = await context.newPage();
 		}
 		await setPageOptions(page, options);
-		return await getPageData(context || browser, page, options);
+		return await getPageDataInternal(context || browser, page, options);
 	} finally {
 		if (privatePage && !options.browserDebug) {
 			await page.close();
@@ -63,7 +63,7 @@ exports.getPageData = async (options, page) => {
 	}
 };
 
-exports.closeBrowser = () => {
+export const closeBrowser = () => {
 	if (browser) {
 		return browser.close();
 	}
@@ -127,8 +127,8 @@ async function setPageOptions(page, options) {
 	}
 }
 
-async function getPageData(context, page, options) {
-	const injectedScript = await scripts.get(options);
+async function getPageDataInternal(context, page, options) {
+	const injectedScript = await get(options);
 	await page.evaluateOnNewDocument(injectedScript);
 	if (options.browserDebug) {
 		await page.waitForTimeout(3000);
@@ -140,7 +140,7 @@ async function getPageData(context, page, options) {
 			const browserWaitUntil = NETWORK_STATES[(NETWORK_STATES.indexOf(options.browserWaitUntil) + 1)];
 			if (browserWaitUntil) {
 				options.browserWaitUntil = browserWaitUntil;
-				return getPageData(context, page, options);
+				return getPageDataInternal(context, page, options);
 			} else {
 				throw error;
 			}
@@ -193,7 +193,7 @@ async function handleJSRedirect(context, options) {
 	if (url != options.url) {
 		options.url = url;
 		await context.close();
-		return exports.getPageData(options);
+		return getPageData(options);
 	}
 }
 

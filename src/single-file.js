@@ -21,15 +21,13 @@
  *   Source.
  */
 
-/* global require */
+import fileUrl from "file-url";
+import fs from "fs";
+import {VALID_URL_TEST, initialize} from "./single-file-api";	
 
-const fileUrl = require("file-url");
-const fs = require("fs");
-const api = require("./single-file-cli-api");	
-
-async function run(options) {
+export async function runBrowser(options) {
 	let urls;
-	if (options.url && !api.VALID_URL_TEST.test(options.url)) {
+	if (options.url && !VALID_URL_TEST.test(options.url)) {
 		options.url = fileUrl(options.url);
 	}
 	if (options.urlsFile) {
@@ -46,7 +44,7 @@ async function run(options) {
 		}
 	}
 	options.retrieveLinks = true;
-	const singlefile = await api.initialize(options);
+	const singlefile = await initialize(options);
 	await singlefile.capture(urls);
 	await singlefile.finish();
 }
@@ -75,5 +73,3 @@ function parseCookies(textValue) {
 		})
 		.filter(cookieData => cookieData);
 }
-
-exports.runBrowser = run
