@@ -1,9 +1,9 @@
 {
 	"name": "@pawanpaudel93/single-file",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"type": "module",
 	"description": "SingleFile",
-	"author": "Gildas Lormeau",
+	"author": "Pawan Paudel",
 	"license": "AGPL-3.0-or-later",
 	"main": "./dist/index.js",
 	"module": "./dist/index.js",
@@ -16,7 +16,7 @@
 	"scripts": {
 		"build": "npm run tsup-build && npm run copy-lib",
 		"tsup-build": "tsup src/index.js --format cjs,esm --clean --shims",
-		"copy-lib": "cp -r ./src/back-ends/common/lib dist/",
+		"copy-lib": "cp -r src/back-ends/common/lib dist/",
 		"build-lib": "yarn && yarn upgrade && rollup -c rollup.config.js",
 		"prepublishOnly": "npm run build",
 		"test": "node test/index.js"
