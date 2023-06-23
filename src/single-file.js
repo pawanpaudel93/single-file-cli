@@ -23,10 +23,12 @@
 
 import fileUrl from "file-url";
 import fs from "fs";
+import {defaultArgs} from "./args"
 import {VALID_URL_TEST, initialize} from "./single-file-api";	
 
-export async function runBrowser(options) {
+export async function saveSingleFile(options) {
 	let urls;
+	options = {...defaultArgs, ...options}
 	if (options.url && !VALID_URL_TEST.test(options.url)) {
 		options.url = fileUrl(options.url);
 	}

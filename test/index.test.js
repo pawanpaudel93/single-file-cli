@@ -1,4 +1,4 @@
-import {defaultArgs, runBrowser} from "../src/index"
+import {saveSingleFile} from "../src/index"
 import {promises} from "fs"
 import { findChrome } from 'find-chrome-bin'
 import { assert, expect, test } from 'vitest'
@@ -18,8 +18,7 @@ test('Single File', async() => {
         revision: '1095492',
       },
     })
-    await runBrowser({
-        ...defaultArgs,
+    await saveSingleFile({
         url: 'https://arweave.org/',
         browserExecutablePath: executablePath,
         output: `${outputDirectory}/index.html`,
