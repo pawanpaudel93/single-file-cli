@@ -31,6 +31,7 @@ export const defaultArgs = {
   },
   backEnd: 'puppeteer', // Back-end to use (choices: "jsdom", "puppeteer", "webdriver-chromium", "webdriver-gecko", "puppeteer-firefox", "playwright-firefox", "playwright-chromium", "playwright-webkit")
   basePath: '', // Base path for storing html, screenshot, and metadata
+  saveScreenshot: false, // Save screenshot or not
   blockMixedContent: false, // Block mixed contents
   browserServer: '', // Server to connect to (puppeteer only for now)
   browserHeadless: true, // Run the browser in headless mode (puppeteer, webdriver-gecko, webdriver-chromium)

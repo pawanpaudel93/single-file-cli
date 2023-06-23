@@ -153,7 +153,9 @@ async function getPageDataInternal(context, page, options) {
 			await page.waitForTimeout(options.browserWaitDelay);
 		}
 		if (options.basePath) {
-			await page.screenshot({ path: path.join(options.basePath, "screenshot.png") });
+			if (options.saveScreenshot) {
+				await page.screenshot({ path: path.join(options.basePath, "screenshot.png") });
+			}
 			const title = await page.title();
 			await fsPromises.writeFile(path.join(options.basePath, "metadata.json"), JSON.stringify({ title, url: options.url }, null, 2));
 		}
@@ -164,7 +166,9 @@ async function getPageDataInternal(context, page, options) {
 		if (error.message && error.message.includes(EXECUTION_CONTEXT_DESTROYED_ERROR)) {
 			const pageData = await handleJSRedirect(context, options);
 			if (options.basePath) {
-				await page.screenshot({ path: path.join(options.basePath, "screenshot.png") });
+				if (options.saveScreenshot) {
+					await page.screenshot({ path: path.join(options.basePath, "screenshot.png") });
+				}
 				const title = await page.title();
 				await fsPromises.writeFile(path.join(options.basePath, "metadata.json"), JSON.stringify({ title, url: options.url }, null, 2));
 			}
