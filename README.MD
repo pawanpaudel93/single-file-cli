@@ -61,7 +61,8 @@ const main = async () => {
       url: 'https://arweave.org/',
       browserExecutablePath: executablePath,
       output: `${outputDirectory}/index.html`,
-      basePath: outputDirectory
+      basePath: outputDirectory,
+      saveScreenshot: true
   })
   const files = await promises.readdir(outputDirectory)
   console.log(files)
